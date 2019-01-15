@@ -21,6 +21,26 @@
     "url": "https://github.com/miage-lille/miage-auth/issues"
   },
   "homepage": "https://github.com/miage-lille/miage-auth#readme",
-  "devDependencies": {},
-  "dependencies": {}
+  "devDependencies": {
+    "a": "^2.1.2",
+    "env-cmd": "^8.0.2",
+    "eslint": "^5.12.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^3.4.0",
+    "eslint-plugin-import": "^2.14.0",
+    "for": "^0.1.0",
+    "install": "^0.12.2",
+    "is": "^3.3.0",
+    "npm": "^6.5.0",
+    "prettier": "^1.15.3",
+    "shortcut": "0.0.4"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.3",
+    "pg": "^7.8.0",
+    "pg-hstore": "^2.3.2",
+    "pino": "^5.10.6",
+    "pino-pretty": "^2.5.0",
+    "sequelize": "^4.42.0"
+  }
 }
