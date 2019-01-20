@@ -11,8 +11,8 @@ db.sequelize
         // start the api
         api.listen(port, ip, err =>
             err
-                ? logger.error(`ð¥  Failed to start API : ${err.stack}`)
-                : logger.info(`ð  API is listening on port ${port}`)
+                ? logger.error(`🔥  Failed to start API : ${err.stack}`)
+                : logger.info(`🌎  API is listening on port ${port}`)
         )
     )
-    .catch(err => logger.error(`ð¥  Failed to connect database : ${err.stack}`));
+    .catch(err => logger.error(`🔥  Failed to connect database : ${err.stack}`));
