@@ -1,31 +1,34 @@
 const omit = require('lodash.omit');
 const { Groups } = require('../model/');
+const logger = require('../logger');
 
 const createGroup = ({ title, description, owner}) =>
     Groups.create({
         title,
         description: description || '',
-        metadatas: {
-            ownerId: owner.id,
-        },
+        ownerId: owner.id,
     });
 
-const findAllByOwner = ({ ownerId }) =>
-    Groups.findAll({
+const findAllByOwner = ownerId =>{
+    logger.info('[GroupController] get all groups ownerId:' + ownerId);
+    return Groups.findAll({
         where: {
             ownerId
         }
-    }).then(group =>
-        user && !user.deletedAt
-            ? Promise.all([
-                omit(
-                    user.get({
-                        plain: true
-                    }),
-                ),
-            ])
-            : Promise.reject(new Error('NO GROUP FIND FOR USER'))
-    );
+    }).then(groups => groups
+        /*groups.forEach((group) => {
+            group && !group.deletedAt
+                ? Promise.all([
+                    omit(
+                        group.get({
+                            plain: true
+                        })
+                    )
+                ])
+                : Promise.reject(new Error('NO GROUP FIND FOR USER'))
+        }
+    )*/
+)};
 
 const getGroup= ({ id }) =>
     Groups.findOne({

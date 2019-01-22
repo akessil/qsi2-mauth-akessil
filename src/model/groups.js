@@ -30,6 +30,11 @@ module.exports = (sequelize, DataTypes) => {
                     );
                 }
             },
+            ownerId: {
+                type: DataTypes.UUID,
+                comment: 'Group Owner ID',
+                allowNull: true,
+            },
             metadatas: {
                 type: DataTypes.JSON,
                 set(val) {
@@ -38,8 +43,7 @@ module.exports = (sequelize, DataTypes) => {
                         val
                     );
                 },
-                // Not null management
-                allowNull: false,
+                allowNull: true,
                 comment: 'metadata',
             }
         },

@@ -1,8 +1,8 @@
 const express = require('express');
-const { createGroup } = require('../controller/groups');
+const { createGroup, findAllByOwner } = require('../controller/groups');
 const logger = require('../logger');
 
-const apiGroups = express.Router();
+const apiGroupsProtected = express.Router();
 
 // http://apidocjs.com/#params
 /**
@@ -18,13 +18,13 @@ const apiGroups = express.Router();
  * @apiSuccess {STRING} message Message.
  * @apiSuccess {JSON} group Group information and metadatas (owner and members).
  */
-apiGroups.post('/', (req, res) =>
+apiGroupsProtected.post('/', (req, res) =>
     !req.body.title
         ? res.status(400).send({
             success: false,
             message: 'Title is required'
         })
-        : createGroup({title: req.body.title, description: req.body.description, owner:{id: '98c61e5d-cd73-43bb-89cf-fbd6d89c38e3'}})
+        : createGroup({title: req.body.title, description: req.body.description, owner: req.user})
             .then(group => {
                 return res.status(201).send({
                     success: true,
@@ -41,5 +41,20 @@ apiGroups.post('/', (req, res) =>
             })
 );
 
+apiGroupsProtected.get('/allMyGroups', (req, res) => {
+    logger.info('get all groups ownerId:' + req.user.id);
+    findAllByOwner(req.user.id).then(groups =>{
+        return res.status(200).send({
+            success: true,
+            groups: groups,
+            message: "my owen groups"
+        })
+    }).catch(err => {
+        logger.error(err.stack);
+        return err;
+    })
+});
 
-module.exports = { apiGroups };
+
+
+module.exports = { apiGroupsProtected };
