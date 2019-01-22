@@ -18,10 +18,9 @@ apiRoutes
     // connect api users router
     .use('/users', apiUsers)
     // api bellow this middelware require Authorization
-    .use('/groups', apiGroups)
     .use(isAuthenticated)
     .use('/users', apiUsersProtected)
-
+    .use('/groups', apiGroups)
     .use((err, req, res, next) => {
         res.status(403).send({
             success: false,
