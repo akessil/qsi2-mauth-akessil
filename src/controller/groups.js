@@ -15,20 +15,11 @@ const findAllByOwner = ownerId =>{
         where: {
             ownerId
         }
-    }).then(groups => groups
-        /*groups.forEach((group) => {
-            group && !group.deletedAt
-                ? Promise.all([
-                    omit(
-                        group.get({
-                            plain: true
-                        })
-                    )
-                ])
-                : Promise.reject(new Error('NO GROUP FIND FOR USER'))
-        }
-    )*/
-)};
+    }).then(groups => groups)
+    .catch(err => {
+        new Error('NO GROUP FIND FOR USER')
+    })
+};
 
 const getGroup= ({ id }) =>
     Groups.findOne({
