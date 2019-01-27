@@ -119,7 +119,7 @@ apiGroupsProtected.put('/owner/deleteMember', (req, res) => {
 
 
 apiGroupsProtected.put('/member/subscribe', (req, res) => {
-        logger.info('[api.groups.deleteMember][IN]: groupId:' + req.body.groupId );
+        logger.info('[api.groups.subscribe][IN]: groupId:' + req.body.groupId );
         return (!req.body.groupId)
             ? res.status(400).send({
                 success: false,
@@ -136,13 +136,40 @@ apiGroupsProtected.put('/member/subscribe', (req, res) => {
                     });
                 })
                 .catch(err => {
-                    logger.error(`💥 Failed to delete member from the group : ${err.stack}`);
+                    logger.error(`💥 Failed to subscribe the group : ${err.stack}`);
                     return res.status(500).send({
                         success: false,
                         message: `${err.name} : ${err.message}`
                     });
                 })
-    }
-);
+    });
+
+
+    apiGroupsProtected.put('/member/unsubscribe', (req, res) => {
+        logger.info('[api.groups.unsubscribe][IN]: groupId:' + req.body.groupId );
+        return (!req.body.groupId)
+            ? res.status(400).send({
+                success: false,
+                message: 'GroupId is required'
+            })
+            : getGroup({id: req.body.groupId}).then(group =>
+                group ?
+                    deleteMemberFromGroup({userId: req.user.id, groupId: group.id}) : Promise.reject(new Error('Group Not Found')))
+                .then(group => {
+                    return res.status(201).send({
+                        success: true,
+                        group: group,
+                        message: 'Subscribe member to group success'
+                    });
+                })
+                .catch(err => {
+                    logger.error(`💥 Failed to subscribe the group : ${err.stack}`);
+                    return res.status(500).send({
+                        success: false,
+                        message: `${err.name} : ${err.message}`
+                    });
+                })
+    });
+
 
 module.exports = { apiGroupsProtected };
