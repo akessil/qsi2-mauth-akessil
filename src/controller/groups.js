@@ -44,9 +44,21 @@ const addMemberToGroup = ({member, groupId,owner}) =>{
         :Promise.reject(new Error('Can not add member'))
 };
 
+const deleteMemberFromGroup = ({userId, groupId}) =>
+    Groups.findOne({
+        where: {
+            id: groupId
+        }
+    }).then(group => {
+            return group.removeUsers(userId);
+        }
+    );
+
 module.exports = {
     createGroup,
     getGroup,
     findAllByOwner,
-    addMemberToGroup
+    addMemberToGroup,
+    deleteMemberFromGroup,
+    getGroup
 };
