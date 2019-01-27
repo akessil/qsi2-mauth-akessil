@@ -38,7 +38,7 @@ const addMemberToGroup = ({member, groupId,owner}) =>{
         getGroup({id: groupId})
             .then( group =>{
                 logger.info('Group found: ' + group);
-                return group.addUsers(member.id);
+                return owner.id === group.ownerId ? group.addUsers(member.id) :Promise.reject(new Error('Can not add member, only the owner can'));
             })
             .catch(err => Promise.reject(err))
         :Promise.reject(new Error('Can not add member'))
