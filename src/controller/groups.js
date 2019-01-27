@@ -32,16 +32,11 @@ const getGroup= ({ id }) =>
             : Promise.reject(new Error('UNKOWN OR DELETED GROUP'))
     );
 
-const addMemberToGroup = ({member, groupId,owner}) =>{
-    logger.info('[controller.groups.addMemberToGroup][IN] memberId: ' +  member.id + ', groupId:' + groupId + ', owner:' + owner.id);
-    return member && owner && owner.id ?
-        getGroup({id: groupId})
-            .then( group =>{
-                logger.info('Group found: ' + group);
-                return owner.id === group.ownerId ? group.addUsers(member.id) :Promise.reject(new Error('Can not add member, only the owner can'));
-            })
-            .catch(err => Promise.reject(err))
-        :Promise.reject(new Error('Can not add member'))
+const addMemberToGroup = ({member, group}) =>{
+    logger.info('[controller.groups.addMemberToGroup][IN] memberId: ' +  member.id + ', groupId:' + group.id + ', owner:');
+    return member && group && member.id && group.id?
+        group.addUsers(member.id)
+        :Promise.reject(new Error('Can not add member, only the owner can'));
 };
 
 const deleteMemberFromGroup = ({userId, groupId}) =>

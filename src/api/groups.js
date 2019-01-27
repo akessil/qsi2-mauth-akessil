@@ -61,13 +61,13 @@ apiGroupsProtected.put('/owner/addMember', (req, res) => {
         return (!req.body.groupId && !req.body.memberId)
             ? res.status(400).send({
                 success: false,
-                message: 'GroupId and memberId is required'
+                message: 'GroupId and memberId are required'
             })
-            : getUser({id:req.body.memberId}).then(member => addMemberToGroup({
-                member,
-                groupId: req.body.groupId,
-                owner: req.user
-            })
+            : getUser({id: req.body.memberId}).then(member =>
+                getGroup({id: req.body.groupId})
+                    .then( group =>{
+                        logger.info('Group found: ' + group);
+                        return req.user.id === group.ownerId ? addMemberToGroup({member, group}):Promise(new Error('Only Owner can add member' ))})
                 .then(group => {
                     return res.status(201).send({
                         success: true,
@@ -90,7 +90,7 @@ apiGroupsProtected.put('/owner/deleteMember', (req, res) => {
     return (!req.body.groupId && !req.body.memberId)
         ? res.status(400).send({
             success: false,
-            message: 'GroupId and memberId is required'
+            message: 'GroupId and memberId are required'
         })
         : getGroup({id: req.body.groupId}).then(group =>
             req.user.id === group.ownerId ?
@@ -116,5 +116,33 @@ apiGroupsProtected.put('/owner/deleteMember', (req, res) => {
     );
 
 
+
+
+apiGroupsProtected.put('/member/subscribe', (req, res) => {
+        logger.info('[api.groups.deleteMember][IN]: groupId:' + req.body.groupId );
+        return (!req.body.groupId)
+            ? res.status(400).send({
+                success: false,
+                message: 'GroupId is required'
+            })
+            : getGroup({id: req.body.groupId}).then(group =>
+                group ?
+                    addMemberToGroup({member: req.user, group}) : Promise.reject(new Error('Can not delete member, owner only can')))
+                .then(group => {
+                    return res.status(201).send({
+                        success: true,
+                        group: group,
+                        message: 'Subscribe member to group success'
+                    });
+                })
+                .catch(err => {
+                    logger.error(`💥 Failed to delete member from the group : ${err.stack}`);
+                    return res.status(500).send({
+                        success: false,
+                        message: `${err.name} : ${err.message}`
+                    });
+                })
+    }
+);
 
 module.exports = { apiGroupsProtected };
