@@ -26,18 +26,27 @@ const getGroup= ({ id }) =>
         where: {
             id
         }
-    }).then(user =>
-        user && !user.deletedAt
-            ? omit(
-            group.get({
-                plain: true
-            }),
-            )
+    }).then(group =>
+        group && !group.deletedAt
+            ? group
             : Promise.reject(new Error('UNKOWN OR DELETED GROUP'))
     );
+
+const addMemberToGroup = ({member, groupId,owner}) =>{
+    logger.info('[controller.groups.addMemberToGroup][IN] memberId: ' +  member.id + ', groupId:' + groupId + ', owner:' + owner.id);
+    return member && owner && owner.id ?
+        getGroup({id: groupId})
+            .then( group =>{
+                logger.info('Group found: ' + group);
+                return group.addUsers(member.id);
+            })
+            .catch(err => Promise.reject(err))
+        :Promise.reject(new Error('Can not add member'))
+};
 
 module.exports = {
     createGroup,
     getGroup,
     findAllByOwner,
+    addMemberToGroup
 };

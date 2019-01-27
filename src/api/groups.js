@@ -1,5 +1,6 @@
 const express = require('express');
-const { createGroup, findAllByOwner } = require('../controller/groups');
+const { createGroup, findAllByOwner, addMemberToGroup } = require('../controller/groups');
+const { getUser } = require('../controller/users');
 const logger = require('../logger');
 
 const apiGroupsProtected = express.Router();
@@ -41,7 +42,7 @@ apiGroupsProtected.post('/', (req, res) =>
             })
 );
 
-apiGroupsProtected.get('/allMyGroups', (req, res) => {
+apiGroupsProtected.get('/owner/all', (req, res) => {
     logger.info('get all groups ownerId:' + req.user.id);
     findAllByOwner(req.user.id).then(groups =>{
         return res.status(200).send({
@@ -54,6 +55,36 @@ apiGroupsProtected.get('/allMyGroups', (req, res) => {
         return err;
     })
 });
+
+apiGroupsProtected.put('/owner/addMember', (req, res) => {
+        logger.info('[api.groups.addMember][IN]: groupId:' + req.body.groupId + ', memberId: ' + req.body.memberId);
+        (!req.body.groupId && !req.body.memberId)
+            ? res.status(400).send({
+                success: false,
+                message: 'GroupId and memberId is required'
+            })
+            : getUser({id:req.body.memberId}).then(member => addMemberToGroup({
+                member,
+                groupId: req.body.groupId,
+                owner: req.user
+            })
+                .then(group => {
+                    return res.status(201).send({
+                        success: true,
+                        group: group,
+                        message: 'Add member to group success'
+                    });
+                })
+                .catch(err => {
+                    logger.error(`💥 Failed to add member to the group : ${err.stack}`);
+                    return res.status(500).send({
+                        success: false,
+                        message: `${err.name} : ${err.message}`
+                    });
+                })
+            )
+    }
+);
 
 
 

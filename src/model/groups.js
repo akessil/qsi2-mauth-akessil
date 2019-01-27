@@ -30,11 +30,6 @@ module.exports = (sequelize, DataTypes) => {
                     );
                 }
             },
-            ownerId: {
-                type: DataTypes.UUID,
-                comment: 'Group Owner ID',
-                allowNull: true,
-            },
             metadatas: {
                 type: DataTypes.JSON,
                 set(val) {
@@ -52,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
             paranoid: true,
         }
     );
+
+    Groups.associate = models => {
+        Groups.belongsToMany(models.Users, { through: 'Members' });
+    };
 
     return Groups;
 };
