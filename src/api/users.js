@@ -95,7 +95,7 @@ apiUsersProtected.get('/', (req, res) =>
   })
 );
 
-apiUsersProtected.delete('/delete', (req, res) =>
+apiUsersProtected.delete('/', (req, res) =>
     !req.user
         ? res.status(400).send({
             success: false,
