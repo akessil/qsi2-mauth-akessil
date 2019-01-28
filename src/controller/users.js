@@ -1,5 +1,6 @@
 const omit = require('lodash.omit');
 const { Users } = require('../model');
+const logger = require('../logger');
 
 const createUser = ({ firstName, lastName, email, password }) =>
   Users.create({
@@ -51,8 +52,22 @@ const getUser = ({ id }) =>
       : Promise.reject(new Error('UNKOWN OR DELETED USER'))
   );
 
+const deleteUser = ({ id }) => {
+    logger.info("[controller.user.delete] [IN] id : "+id)
+    return Users.destroy({
+        where: {id : id}}
+    ).then(affectedRows => {
+        affectedRows === 1 ?
+        logger.info("[controller.user.delete] delete user success id : "+id) &&
+        Promise.resolve("The user [id="+id+"] has been deleted") : Promise.reject(new Error('DELETE USER ERROR'));
+    }).catch(err =>
+        Promise(err)
+    );
+};
+
 module.exports = {
   createUser,
   getUser,
-  loginUser
+  loginUser,
+    deleteUser
 };
